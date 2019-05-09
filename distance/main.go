@@ -1,13 +1,11 @@
 package distance
 
 import (
-	"strconv"
-
 	"github.com/danielstefank/deduplication/distance/calculator"
 )
 
-func CalculateMatrixNaive(names []string) [][]string {
-	matrix := make([][]string, 0, 0)
+func CalculateMatrixNaive(names []string) [][]int {
+	matrix := make([][]int, 0, 0)
 
 	for _, name := range names {
 		matrix = append(matrix, calculateDistances(name, names))
@@ -16,11 +14,11 @@ func CalculateMatrixNaive(names []string) [][]string {
 	return matrix
 }
 
-func calculateDistances(name string, names []string) []string {
-	distances := make([]string, 0, 0)
+func calculateDistances(name string, names []string) []int {
+	distances := make([]int, 0, 0)
 
 	for _, coName := range names {
-		distances = append(distances, strconv.Itoa(calculator.ComputeDistance(name, coName)))
+		distances = append(distances, calculator.ComputeDistance(name, coName))
 	}
 
 	return distances
