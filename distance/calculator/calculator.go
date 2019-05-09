@@ -1,4 +1,4 @@
-package distance
+package calculator
 
 import "unicode/utf8"
 
