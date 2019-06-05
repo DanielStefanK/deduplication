@@ -17,6 +17,7 @@ func main() {
 	var mode string
 	var fileName string
 	var output string
+	var length int
 
 	app := cli.NewApp()
 
@@ -39,6 +40,12 @@ func main() {
 			Usage:       "the file where the data sould be written to",
 			Destination: &output,
 		},
+		cli.IntFlag{
+			Name:        "length, l",
+			Value:       10,
+			Usage:       "the length of the blocks",
+			Destination: &length,
+		},
 	}
 
 	app.Action = func(c *cli.Context) error {
@@ -49,7 +56,7 @@ func main() {
 			}
 		case "block":
 			{
-
+				block(fileName, output, length)
 			}
 		default:
 			{
@@ -84,6 +91,25 @@ func naive(filename string, output string) {
 	}
 }
 
+func block(filename string, output string, length int) {
+	names := readInFile(filename)
+	matrix := distance.CalculateMatrixBlock(names, length)
+	tableString := &strings.Builder{}
+	table := tablewriter.NewWriter(tableString)
+	// table.SetHeader(append([]string{""}, names...))
+	table.SetBorder(false) // Set Border to false
+	//table.AppendBulk(prependNamesToMatrix(convertMatrixToString(matrix), names))
+	table.AppendBulk(convertMatrixToString(matrix)) // Add Bulk Data
+	table.Render()
+
+	d1 := []byte(tableString.String())
+	err := ioutil.WriteFile(output, d1, 0644)
+	if err != nil {
+		fmt.Println("error writing file")
+		panic(err)
+	}
+}
+
 func prependNamesToMatrix(matrix [][]string, names []string) [][]string {
 	newMatrix := make([][]string, 0, 0)
 
@@ -100,7 +126,13 @@ func convertMatrixToString(matrix [][]int) [][]string {
 	for _, distances := range matrix {
 		newDistances := make([]string, 0, 0)
 		for _, distance := range distances {
-			newDistances = append(newDistances, strconv.Itoa(distance))
+			var i string
+			if distance == -1 {
+				i = ""
+			} else {
+				i = strconv.Itoa(distance)
+			}
+			newDistances = append(newDistances, i)
 		}
 		newMatrix = append(newMatrix, newDistances)
 	}
