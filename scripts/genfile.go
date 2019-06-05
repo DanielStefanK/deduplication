@@ -18,6 +18,7 @@ func main() {
 	var fileName string
 	var output string
 	var length int
+	var threshold int
 
 	app := cli.NewApp()
 
@@ -41,6 +42,12 @@ func main() {
 			Destination: &output,
 		},
 		cli.IntFlag{
+			Name:        "threshold,t",
+			Value:       2,
+			Usage:       "the threshold to find duplicates",
+			Destination: &threshold,
+		},
+		cli.IntFlag{
 			Name:        "length, l",
 			Value:       10,
 			Usage:       "the length of the blocks",
@@ -52,11 +59,11 @@ func main() {
 		switch mode {
 		case "naive":
 			{
-				naive(fileName, output)
+				naive(fileName, output, threshold)
 			}
 		case "block":
 			{
-				block(fileName, output, length)
+				block(fileName, output, length, threshold)
 			}
 		default:
 			{
@@ -72,7 +79,7 @@ func main() {
 	}
 }
 
-func naive(filename string, output string) {
+func naive(filename string, output string, threshold int) {
 	names := readInFile(filename)
 	matrix := distance.CalculateMatrixNaive(names)
 	tableString := &strings.Builder{}
@@ -82,16 +89,18 @@ func naive(filename string, output string) {
 	//table.AppendBulk(prependNamesToMatrix(convertMatrixToString(matrix), names))
 	table.AppendBulk(convertMatrixToString(matrix)) // Add Bulk Data
 	table.Render()
-
 	d1 := []byte(tableString.String())
 	err := ioutil.WriteFile(output, d1, 0644)
 	if err != nil {
 		fmt.Println("error writing file")
 		panic(err)
 	}
+
+	d2 := []byte(calcDuplicates(matrix, names, threshold))
+	err = ioutil.WriteFile("distances.txt", d2, 0644)
 }
 
-func block(filename string, output string, length int) {
+func block(filename string, output string, length int, threshold int) {
 	names := readInFile(filename)
 	matrix := distance.CalculateMatrixBlock(names, length)
 	tableString := &strings.Builder{}
@@ -101,13 +110,17 @@ func block(filename string, output string, length int) {
 	//table.AppendBulk(prependNamesToMatrix(convertMatrixToString(matrix), names))
 	table.AppendBulk(convertMatrixToString(matrix)) // Add Bulk Data
 	table.Render()
-
 	d1 := []byte(tableString.String())
 	err := ioutil.WriteFile(output, d1, 0644)
+
 	if err != nil {
 		fmt.Println("error writing file")
 		panic(err)
 	}
+
+	d2 := []byte(calcDuplicates(matrix, names, threshold))
+	err = ioutil.WriteFile("distances.txt", d2, 0644)
+
 }
 
 func prependNamesToMatrix(matrix [][]string, names []string) [][]string {
@@ -118,6 +131,7 @@ func prependNamesToMatrix(matrix [][]string, names []string) [][]string {
 		newDistances := append([]string{name}, distances...)
 		newMatrix = append(newMatrix, newDistances)
 	}
+
 	return newMatrix
 }
 
@@ -150,4 +164,20 @@ func readInFile(name string) []string {
 		panic(err)
 	}
 	return strings.Split(string(data), "\n")
+}
+
+func calcDuplicates(matrix [][]int, names []string, threshold int) string {
+	var sb2 strings.Builder
+	for i := 0; i < len(matrix); i++ {
+		var sb strings.Builder
+		for j := i; j < len(matrix); j++ {
+			if matrix[i][j] <= threshold && matrix[i][j] > 0 {
+				fmt.Fprintf(&sb, "%s, ", names[j])
+			}
+		}
+		if sb.Len() != 0 {
+			fmt.Fprintf(&sb2, "%s: %s\n", names[i], sb.String())
+		}
+	}
+	return sb2.String()
 }
