@@ -1,0 +1,178 @@
+\documentclass[sigconf]{acmart}
+\settopmatter{printacmref=false} % Removes citation information below abstract
+\renewcommand\footnotetextcopyrightpermission[1]{} % removes footnote with conference information in first column
+\pagestyle{plain}
+
+\usepackage{graphicx}
+\usepackage{balance}  % for  \balance command ON LAST PAGE  (only there!)
+\usepackage{pgfplots}
+\usetikzlibrary{patterns}
+\usepackage{pgfplotstable}
+\usetikzlibrary{arrows, decorations.markings}
+\usepackage[binary-units=true]{siunitx}
+\sisetup{
+     per-mode = symbol
+}
+\DeclareSIUnit{\void}{\relax}
+\usepackage{fancyvrb}
+\usepackage{multicol}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage[algo2e,vlined]{algorithm2e}
+\usepackage{amsmath}
+\usepackage{wrapfig}
+\usetikzlibrary{matrix}
+\usepgfplotslibrary{groupplots}
+\pgfplotsset{compat=newest}
+\usepackage{dblfloatfix}
+\usepackage{newfloat}
+\usepackage{makecell}
+\usepackage{cancel}
+\usepackage{bbding}
+\usepackage{enumitem}
+\usepackage[caption=false]{subfig}
+\interfootnotelinepenalty=10000
+
+%fix for algo2e in regular float
+\makeatletter
+\newcommand{\removelatexerror}{\let\@latex@error\@gobble}
+\makeatother
+
+
+\lstdefinestyle{mkc}{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=L,
+  xleftmargin=\parindent,
+  language=C,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries\color{green!40!black},
+  commentstyle=\itshape\color{purple!40!black},
+  stringstyle=\color{orange},
+}
+
+\pgfplotscreateplotcyclelist{barplot-cyclelist}{
+    black, fill=white\\% postaction={pattern color=black,   pattern=fill}\\%
+    black, fill=black!50\\% postaction={pattern color=black,   pattern=fill}\\%
+    black,  postaction={pattern color=black,      pattern=north east lines}\\%
+    black,  postaction={pattern color=black,   pattern=crosshatch dots}\\%
+}
+
+\begin{document}
+
+
+\title{Sample Report}
+
+\author{Max Mustermann}
+\affiliation{
+  \institution{TU Dortmund University}
+}
+\email{max.mustermann@udo.edu}
+
+%\titlenote{}
+%\subtitle{}
+
+\begin{abstract}
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+\end{abstract}
+
+\maketitle
+
+\section*{Problem}
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+\subsection*{Part 1}
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. See Figure \ref{fig-eval}.
+
+\subsection*{Part 2}
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. See Figure \ref{fig-eval}.
+
+\begin{figure}[h]
+    \centering
+\begin{tikzpicture}
+    \begin{axis}[clip=false,cycle list name=black white,height=6cm,width=\linewidth,xmin=0, ymin=0, 
+        xlabel={number of threads},
+	    ylabel={ops / s}, 
+	    legend style={draw=none, fill=none, at={(0.01,0.99)}, font=\small, anchor=north west, cells={align=center} },
+            ymax=20000000,
+            xmin=2,
+            xmax=24,
+            xtick={4,8,12,16,20,24},
+            ]
+        \addplot[mark=*, mark options={fill=black, scale=0.9}] 
+	coordinates {
+          ( 2, 2259605.09)
+          ( 4, 2390717.73)
+          ( 6, 3179616.58)
+          ( 8, 1759051.21)
+          (10, 2227286.20)
+          (12, 1692109.86)
+          (14, 1385706.61)
+          (16, 2078389.33)
+          (18, 1417381.60)
+          (20, 1444345.35)
+          (22, 1312763.76)
+          (24, 1125949.17)
+
+        };
+        \addplot[mark=triangle*, mark options={fill=black, scale=1.0}] 
+	coordinates {
+          ( 2, 3153413.43 )
+          ( 4, 5844229.43 )
+          ( 6, 7265404.88 )
+          ( 8, 8270193.06 )
+          (10, 9199945.87 )
+          (12, 10411291.51)
+          (14, 9110318.33 )
+          (16, 8861824.09 )
+          (18, 12916326.84)
+          (20, 10551555.55)
+          (22, 10419538.69)
+          (24, 11569367.89)
+        };
+        \addplot[mark=square*, mark options={fill=white, scale=0.8}] 
+	coordinates {
+          ( 2, 3836503.56 )
+          ( 4, 5845241.90 )
+          ( 6, 8249727.19 )
+          ( 8, 9014311.94 )
+          (10, 10192410.88)
+          (12, 12196057.74)
+          (14, 14237032.58)
+          (16, 13766851.49)
+          (18, 14327279.36)
+          (20, 17231180.68)
+          (22, 16591718.83)
+          (24, 16192895.34)
+
+        };
+        \legend{Technik 1, Technik 2, Technik 3}
+
+    \end{axis}
+\end{tikzpicture}
+\caption{Lorem ipsum dolor sit amet.}
+\label{fig-eval}
+\end{figure}
+
+\section*{Solution}
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+\subsection*{Result 1}
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+\subsection*{Result 2}
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+\medskip
+
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. See Figure \ref{fig-eval}.
+
+
+\section*{Summary}
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+\section*{References}
+
+\end{document}
+
