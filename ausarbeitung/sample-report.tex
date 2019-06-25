@@ -243,14 +243,65 @@ sind nur die Roten Zellen Interessant und müssen berechnet werden.
 \end{figure}
 
 Dabei sieht man auch sofort das Probelm der vollen Vergleichmatrix.
-Es müssen sehr viele vergleich gemacht werden. Bei 1.000 verschiedener
-Elemente müssen schon 499.000 bei 10.000 schon 49.990.000 Vergleiche 
+Es müssen sehr viele vergleich gemacht werden. Bei $n$
+Strings müssen 
+$$\frac{n^2}{2} - n$$ 
+Vergleiche gemacht werden. 
+Bei 1.000 verschiedener
+Elemente müssen 499.000 bei 10.000 schon 49.990.000 Vergleiche 
 gemacht werden. Dies wird sehr schnell ineffiziente.
 
-Die effizientere Lösung ist hier das Blocking
+Die effizientere Lösung ist hier das Blocking.
+Beim Blocking berechnen wir nicht die gesamte 
+Vergleichsmatix, sondern wir teilen die Liste der Strings 
+in Blöcke auf. Die Vergleiche finden nun nur noch in diesen
+Blöcken statt. Dies ist in Abbildung \ref{abb:matrixblock} zu sehen.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics{table2.pdf}
+  \caption{Vergleichmatrix mit Blocking}
+  \label{abb:matrixblock}
+\end{figure}
+
+Wenn wir jedoch nur die Liste strikt in $n$
+Teile aufteilen verlieren wir an Genauigkeit, da wir
+manche Strings nicht vergleichen.
+Um das zu verhindern teilen wir nicht einfach in $n$
+Blöcke, sondern wir sortieren die Strings anhand von 
+bestimmten Kriterien. String einer bestimmen Kritere kommen
+einen Block. Diese Kriterien-Blöcke verhindern, das
+ähnliche, bzw. ähnliche String in einen Block kommen 
+und verglichen werden.
+Es gibt merhere Strategien Kategorien zu wählen. Diese
+kommt immer auch den Kontext des Strings an.
+Eine Strategie ist es nach dem Anfangszeichen zu 
+sortieren, da dort meist kein Fehler gemacht wird.
+Eine bessere Strategie ist jedoch sich die Entity,
+die diesen String beschreibt, sich genauer anzusehen,
+um dort eine Eigenschaft zu finden, welche sehr 
+Fehlertolerant und 2 String mit gleicher Bedeutung
+die selbe Eigenschaft haben.
+Nehmen wir zum Beispiel das deduplizieren von 
+Straßennamen. Hier könnte eine sinnvolle
+Eigenschaft sein die ersten 3 Ziffern der 
+Postleitzahl zu nehmen, da diese oft richtig 
+Eingegben werden und zwei Straßennamen mit selber
+Bedeutung immer die selbe Postleitzahl hat.
+Wenn wir die $n$ Strings in $b$ gleich große Blöcke
+einteilen erhalter wir eine Laufzeit von
+$$\frac{1}{2} (\frac{n^2}{b}-n)$$
+Durch das aufteilen in Blöcken nach verschiedenen
+Eigenschaften reduzieren wir die Wahrscheinlichkeit,
+dass wir manche Duplikate nciht finden.
+
+Ein weitere Erweiterung davon wäre wenn man diese
+Aufteilung in Blöcke und das finden von Duplikaten
+mehrmal mit verschiedenen Eigenschaften durchführt.
+Dadurch sink die Wahrscheinlichkeit von Duplikaten
+im Endresultat nocheinmal.
 
 \section*{Summary}
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
 
 \section*{References}
 
