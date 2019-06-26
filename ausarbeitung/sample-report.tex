@@ -36,6 +36,8 @@
 \usepackage{enumitem}
 \usepackage[caption=false]{subfig}
 \usepackage{mathtools}
+\renewcommand{\contentsname}{Referenzen}
+\renewcommand{\refname}{Referenzen}
 
 \DeclarePairedDelimiter\abs{\lvert}{\rvert}
 \interfootnotelinepenalty=10000
@@ -82,10 +84,12 @@
 
 \begin{abstract}
 Ein wichtiger Teil des ETL-Prozesses ist die Deduplikation.
-In dieser Ausarbeitung werde ich mich genauer mit dem Thema der Deduplikation
-befassen. Es werden mehrere Metriken vorgestellt, andenen man Duplikate erkennen kann.
-Derweiteren werde ich eine Methode vorstellen mit der man diese effizient implementieren kann.
-
+In dieser Ausarbeitung werde ich mich genauer mit dem Thema 
+der Deduplikation
+befassen. Es werden mehrere Metriken vorgestellt, andenen 
+man Duplikate erkennen kann.
+Derweiteren werde ich eine Methode vorstellen mit der man 
+diese effizient implementieren kann.
 
 \end{abstract}
 
@@ -120,11 +124,11 @@ ineffiziente Lösung ist und schauen uns weitere Alternativen an.
 
 
 \subsection*{Vergleichsmaße}
-Als Erstes wollen wir uns verschiedene Vergleichsmaße ansehen, wie sie 
-implementiert werden können, sowie ihre Vor- beziehungsweise Nachteile.
+Als Erstes wollen wir uns verschiedene Vergleichsmaße ansehen, wie auch
+die verschiedenen Ansätze dieser.
 
 Das wohl einfachste Maß für die Gleichheit zweier Zwichenketten
-ist die sogenannte \emph{Editierdistanz}, welche auch als
+ist die sogenannte \emph{Editierdistanz} \cite[Vgl. S. 2] {cohen2003comparison}, welche auch als
 \emph{Levenshtein-Distanz} bezeichnet wird. Die Editierdistanz
 misst wie viele Operationen es braucht um den einen String in den 
 anderen zu transformieren. Die Oprationen lauten \emph{erstzen}, wobei
@@ -132,7 +136,7 @@ ein Zeichen durch ein weiteres ersetzt wird, \emph{einfügen}, wobei ein
 Zeichen in einen String eingefügt wird und \emph{löschen}, wobei ein 
 Zeichen gelöscht wird. Um dies zu implementieren machen wir Gebrauch
 von dem Konzept der \emph{dynamischen Programmierung}. Der Algorithmus ist
-in Pseudocode \ref{alg:editdistance} zu sehen.
+in Pseudocode \ref{alg:editdistance} zu sehen \cite[Vgl. S. 223] {bille2005survey}.
 
 
   \begin{algorithm}
@@ -174,7 +178,7 @@ in Pseudocode \ref{alg:editdistance} zu sehen.
     \end{algorithm}
 
 Als weiters Maß für das finden von Duplikaten ist die 
-\emph{Jaccard Similarity}. Diese misst die Ähnlichkeit von Mengen.
+\emph{Jaccard Similarity} \cite[Vgl. 4.1.1]{theobald2008spotsigs}. Diese misst die Ähnlichkeit von Mengen.
 Da wir aber keine Mengen vergleich sonders String, machen wir einen
 kleinen Trick und überführen unsere STrings in Mengen, indem wir 
 jeweils zwei aufeinanderfolgende Zeichen des Strings zu einem Element
@@ -201,8 +205,8 @@ Als Beispiel vergleich wir \emph{Sweet} und \emph{Sweat}.
 \end{gather*}
 
 Neben diesen Maßen existieren weiter, welche sich an der 
-Aussprache von Worten orientiert. Hierfür ist der Soundex
-sowie Metaphone ein Beispiel.
+Aussprache von Worten orientiert. Hierfür ist der Soundex \cite[Vlg. S. 5]{elmagarmid1}
+sowie Metaphone \cite[Vlg. S. 5]{elmagarmid1} ein Beispiel.
 Beim Soundex wird das erste Zeichen beibehalten und die folgenden
 Zeichen werden durch die jeweilige Nummer ersetzt. Andere Zeichen werden
 entfernt. Doppelt aufeinander folgende Zahlen werden auf eine Reduziert.
@@ -251,11 +255,14 @@ Bei 1.000 verschiedener
 Elemente müssen 499.000 bei 10.000 schon 49.990.000 Vergleiche 
 gemacht werden. Dies wird sehr schnell ineffiziente.
 
-Die effizientere Lösung ist hier das Blocking.
+Die effizientere Lösung ist hier das Blocking \cite[Vlg. S. 11]{elmagarmid1}.
 Beim Blocking berechnen wir nicht die gesamte 
 Vergleichsmatix, sondern wir teilen die Liste der Strings 
 in Blöcke auf. Die Vergleiche finden nun nur noch in diesen
-Blöcken statt. Dies ist in Abbildung \ref{abb:matrixblock} zu sehen.
+Blöcken statt, welches in Abbildung \ref{abb:matrixblock} zu sehen ist,
+oder es wird ein Fenster einer bestimmten Blockgröße über die
+Diagonale geschoben und vergleich werden nur innerhabl
+dieses Fensters gemacht.
 
 \begin{figure}[htbp]
   \centering
@@ -269,8 +276,9 @@ Teile aufteilen verlieren wir an Genauigkeit, da wir
 manche Strings nicht vergleichen.
 Um das zu verhindern teilen wir nicht einfach in $n$
 Blöcke, sondern wir sortieren die Strings anhand von 
-bestimmten Kriterien. String einer bestimmen Kritere kommen
-einen Block. Diese Kriterien-Blöcke verhindern, das
+bestimmten Kriterien. String einer bestimmen Kriterie kommen
+einen Block bzw. werden anhand dieser sortiert \cite[Vlg. S. 11]{elmagarmid1}. 
+Diese Kriterien-Blöcke verhindern, das
 ähnliche, bzw. ähnliche String in einen Block kommen 
 und verglichen werden.
 Es gibt merhere Strategien Kategorien zu wählen. Diese
@@ -293,17 +301,27 @@ einteilen erhalter wir eine Laufzeit von
 $$\frac{1}{2} (\frac{n^2}{b}-n)$$
 Durch das aufteilen in Blöcken nach verschiedenen
 Eigenschaften reduzieren wir die Wahrscheinlichkeit,
-dass wir manche Duplikate nciht finden.
+dass wir manche Duplikate nicht finden.
 
 Ein weitere Erweiterung davon wäre wenn man diese
 Aufteilung in Blöcke und das finden von Duplikaten
-mehrmal mit verschiedenen Eigenschaften durchführt.
-Dadurch sink die Wahrscheinlichkeit von Duplikaten
+mehrmal mit verschiedenen Eigenschaften durchführt 
+\cite[Vlg. S. 11]{elmagarmid1}.
+Dadurch sinkt die Wahrscheinlichkeit von Duplikaten
 im Endresultat nocheinmal.
 
-\section*{Summary}
+\section*{Zusammenfassung}
+Alles zusammen ist die Deduplikation eine gute Idee.
+Jedoch muss eine Kontext bedingte Strategie entwickelt
+werden um Duplikate sicher und effizient finden zu 
+können. Hierbei ist zuerst die Wähl des Vergleichsmaß
+entscheident. Des weiteren muss eine Fehlertolerante
+und mit der Bedeutung übereinstimmende Eigenschaft 
+gefunden werden, um die String in vernünftige Blöcke 
+einteilen zu können.
 
-\section*{References}
+\bibliographystyle{abbrv}
+\bibliography{acmart}
 
 \end{document}
 
