@@ -96,7 +96,7 @@
 \maketitle
 
 \section*{Problem}
-In einem OLTP-System sind die Daten meist "schmutzig". Das bedeutet, 
+In einem OLTP-System sind die Daten oft "schmutzig". Das bedeutet, 
 dass das ein Großteil der Daten auch nach wie vor mit der Hand von
 einzelnen Personen in das Datenbank-System eingetragen werden. 
 
@@ -135,9 +135,9 @@ ist die sogenannte \emph{Editierdistanz} \cite[Vgl. S. 2] {cohen2003comparison},
 welche auch als \emph{Levenshtein-Distanz} bezeichnet wird.
 Die Editierdistanz misst, wie viele Operationen es braucht, 
 um den einen String in den anderen zu transformieren. 
-Die Operationen lauten \emph{erstzen}, wobei ein Zeichen
-durch ein weiteres ersetzt wird, \emph{einfügen}, wobei ein
-Zeichen in einen String eingefügt wird und \emph{löschen}, 
+Die Operationen lauten \emph{Ersetzen}, wobei ein Zeichen
+durch ein weiteres ersetzt wird, \emph{Einfügen}, wobei ein
+Zeichen in einen String eingefügt wird und \emph{Löschen}, 
 wobei ein Zeichen gelöscht wird. Um dies zu implementieren 
 machen wir Gebrauch von dem Konzept der 
 \emph{dynamischen Programmierung}. Der Algorithmus ist
@@ -185,14 +185,14 @@ in Pseudocode \ref{alg:editdistance} zu sehen
 Als weiters Maß für das Finden von Duplikaten ist die
 \emph{Jaccard Similarity} \cite[Vgl. 4.1.1]{theobald2008spotsigs}. 
 Diese misst die Ähnlichkeit von Mengen. Da wir aber keine Mengen 
-vergleichen sonders Strings, machen wir einen
+vergleichen, sondern Strings, machen wir einen
 kleinen Trick und überführen unsere Strings in Mengen, indem wir
 jeweils zwei aufeinanderfolgende Zeichen des Strings zu einem Element
 der Menge machen. Zum Beispiel wird aus $"Sweet"$ dann
 $\{"Sw", "we", "ee", "et" \}$. Damit können wir auch Strings vergleichen.
 Das Vergleichen selber geschieht mit der Formel:
 $$\frac{\abs{S_1 \cap S_2}}{\abs{S_1 \cup S_2}}$$
-Als Beispiel vergleichen wir \emph{Sweet} und \emph{Sweat}.
+Als Beispiel vergleichen wir \emph{Sweet} und \emph{Sweat}:
 
 \begin{gather*}
   \frac{
@@ -210,17 +210,17 @@ Als Beispiel vergleichen wir \emph{Sweet} und \emph{Sweat}.
   \frac{1}{3}
 \end{gather*}
 
-Neben diesen Maßen existieren weiter, welche sich an der
+Neben diesen Maßen existieren weitere, welche sich an der
 Aus-sprache von Worten orientiert. Hierfür ist der Soundex 
 \cite[Vlg. S. 5]{elmagarmid1} sowie Metaphone 
 \cite[Vlg. S. 5]{elmagarmid1} ein Beispiel.
 Beim Soundex wird das erste Zeichen beibehalten und die folgenden
 Zeichen werden durch die jeweilige Nummer ersetzt. 
 Andere Zeichen werden entfernt. Doppelt aufeinander 
-folgende Zahlen werden auf eine Reduziert.
+folgende Zahlen werden auf eine reduziert.
 Es werden maximal drei Nummern verwendet. Falls weniger vorhanden sind,
 werden sie mit Nullen aufgefüllt. Die Zeichen werden
-wie folgt esetzt:
+wie folgt ersetzt:
 
 
 \[ f(n) =
@@ -239,14 +239,14 @@ wie folgt esetzt:
 
 
 \subsection*{Vergleichsmatix}
-Um jeden String mit jedem anderen zu vergleichen Stellen wir eine
-sogenannte Vergleichsmatrix auf. Haben wir eine List $l$ an Strings
+Um jeden String mit jedem anderen zu vergleichen, Stellen wir eine
+sogenannte Vergleichsmatrix auf. Haben wir eine Liste $l$ an Strings,
 bekommen wir eine Matrix $d$ mit $\abs{l\times l}$ Elementen. Da alle
-Vergleichsmaße kommutativ sind und der Vergleich mit sich Selbs
+Vergleichsmaße kommutativ sind und der Vergleich mit sich selbst
 irrelevant ist, müssen wir jedoch nur die Einträge oberhalb der
 Diagonalen von $d[0,0]$ bis $d[\abs{l}, \abs{l}]$ betrachten.
 Dies ist in Abbildung \ref{abb:matrix} dargestellt. Hierbei
-sind nur die roten Zellen Interessant und müssen berechnet werden.
+sind nur die roten Zellen interessant und müssen berechnet werden.
 
 \begin{figure}[htbp]
   \centering
@@ -260,9 +260,9 @@ Es müssen sehr viele Vergleiche gemacht werden. Bei $n$
 Strings müssen
 $$\frac{n^2}{2} - n$$
 Vergleiche gemacht werden.
-Bei $1000$ verschiedener
-Elemente müssen $499000$ bei $10000$ schon $49990000$ Vergleiche
-gemacht werden. Dies wird sehr schnell ineffiziente.
+Bei $1000$ verschiedenen
+Elementen müssen $499000$ bei $10000$ schon $49990000$ Vergleiche
+gemacht werden. Dies wird sehr schnell ineffizient.
 
 Die effizientere Lösung ist hier das Blocking \cite[Vlg. S. 11]{elmagarmid1}.
 Beim Blocking berechnen wir nicht die gesamte
@@ -289,17 +289,17 @@ Blöcke, sondern wir sortieren die Strings anhand von
 bestimmten Kriterien. Strings eines bestimmen Kriteriums kommen
 einen Block bzw. werden anhand dieser sortiert \cite[Vlg. S. 11]{elmagarmid1}.
 Diese Kriterien-Blöcke verhindern, dass
-ähnliche Strings in einen Block kommen
-und verglichen werden.
+ähnliche Strings in unterschiedlichen Blöcken landen
+und nicht verglichen werden.
 Es gibt mehrere Strategien Kategorien zu wählen. Diese
-kommt immer auf den Kontext des Strings bzw. der Entity 
-im OLAP-Systems an.
+kommt immer auf den Kontext des Strings bzw. auf die Entity 
+im OLAP-Systems, welche zu dem String gehört, an.
 Eine Strategie ist es nach dem Anfangszeichen zu
 sortieren, da dort meist kein Fehler gemacht wird.
 Eine bessere Strategie ist jedoch sich die Entity,
 die diesen String beschreibt, genauer anzusehen,
 um dort eine Eigenschaft zu finden, welche sehr
-Fehlertolerant und 2 String mit gleicher Bedeutung
+Fehlertolerant ist und 2 String mit gleicher Bedeutung
 dieselbe Eigenschaft haben.
 Nehmen wir zum Beispiel das Deduplizieren von
 Straßennamen. Hier könnte eine sinnvolle
@@ -324,10 +324,10 @@ im Endresultat noch einmal.
 
 \section*{Zusammenfassung}
 Alles zusammen ist die Deduplikation ein essentieller 
-Bestandteil des ETL-Processes.
+Bestandteil des ETL-Prozesses.
 Jedoch muss eine durch den Kontext bedingte Strategie entwickelt
 werden um Duplikate sicher und effizient finden zu
-können. Hierbei ist zuerst die Wähl des Vergleichsmaß
+können. Hierbei ist zuerst die Wahl des Vergleichsmaß
 entscheidend. Des Weiteren muss eine Fehlertolerante
 und mit der Bedeutung übereinstimmende Eigenschaft
 gefunden werden, um die String ideal zu sortieren bzw. 
