@@ -86,7 +86,7 @@
   Ein wichtiger Teil des ETL-Prozesses ist die Deduplikation.
   In dieser Ausarbeitung werde ich mich genauer mit dem Thema
   der Deduplikation
-  befassen. Es werden mehrere Metriken vorgestellt, anderen
+  befassen. Es werden mehrere Metriken vorgestellt, an denen
   man Duplikate erkennen kann.
   Des Weiteren werde ich eine Methode vorstellen, mit der man
   diese effizient implementieren kann.
@@ -96,47 +96,53 @@
 \maketitle
 
 \section*{Problem}
-In einem OLTP-System sind die Daten meist "schmutzig". Das bedeutet, dass 
-das ein Großteil der Daten auch nach wie vor mit der Hand von einzelnen
-Personen in das Datenbank-System eingetragen werden. 
+In einem OLTP-System sind die Daten meist "schmutzig". Das bedeutet, 
+dass das ein Großteil der Daten auch nach wie vor mit der Hand von
+einzelnen Personen in das Datenbank-System eingetragen werden. 
 
 Bei diesen eingetragen
-passieren verschiedene Fehler. Ein Fehler davon ist, das ein Eintrag falsch
-geschrieben ist bzw. mit verschiedenen Schreibweisen in dem Datenbank-System
-zu finden ist. Ein Beispiel dafür ist die Schreibweise für Dortmund.
-Ein Mitarbeiter eines Unternehmens macht unabsichtlich einen
-Schreibfehler und trägt Dortmond als Verkaufsort eines Produkts.
+passieren verschiedene Fehler. Ein Fehler davon ist, das ein Eintrag 
+falsch geschrieben ist bzw. mit verschiedenen Schreibweisen des
+selben Eintrags in dem 
+Datenbank-System zu finden ist. Ein Beispiel dafür ist die 
+Schreibweise für Dortmund. Ein Mitarbeiter eines Unternehmens 
+macht unabsichtlich einen Schreibfehler und trägt Dortmond als 
+Verkaufsort eines Produkts.
 
 Dies führt dazu, dass nach der Überführung der Daten in ein
-Datawarehouse dieser Verkauf nicht zu den Verkäufen des Standortes Dortmund
-gehört und damit auch nicht bei den Aggregationen mit eingerechnet wird.
-Hier kommt die Deduplikation im ETL-Prozess ins Spiel.
+Datawarehouse dieser Verkauf nicht zu den Verkäufen des Standortes 
+Dortmund gehört und damit auch nicht bei den Aggregationen mit 
+eingerechnet wird. Hier kommt die Deduplikation im ETL-Prozess 
+ins Spiel.
 
 \section*{Lösung}
-Das Finden und Zusammenführen von solchen Duplikaten wird im ETL-Prozess
-auch Deduplikation genannt. Bei der einfachsten Form für das Finden von
-Duplikaten vergleichen wir, mit einem vorher festgelegtem Maß jedes Wort
-mit jedem anderen und führen diese zusammen welche unterhalb eines
-bestimmten Thresholds liegen.
+Das Finden und Zusammenführen von solchen Duplikaten wird im 
+ETL-Prozess auch Deduplikation genannt. Bei der einfachsten Form 
+für das Finden von Duplikaten vergleichen wir, mit einem vorher 
+festgelegtem Maß jedes Wort mit jedem anderen und führen diese 
+zusammen welche unterhalb eines bestimmten Thresholds liegen.
 
 Im weiteren Verlauf dieser Arbeit werden wir sehen, dass dies eine sehr
 ineffiziente Lösung ist und schauen uns weitere Alternativen an.
 
 
 \subsection*{Vergleichsmaße}
-Als Erstes wollen wir uns verschiedene Vergleichsmaße ansehen, wie auch
-die verschiedenen Ansätze dieser.
+Als Erstes wollen wir uns verschiedene Vergleichsmaße ansehen, 
+wie auch die verschiedenen Ansätze dieser.
 
 Das wohl einfachste Maß für die Gleichheit zweier Zeichenketten
-ist die sogenannte \emph{Editierdistanz} \cite[Vgl. S. 2] {cohen2003comparison}, welche auch als
-\emph{Levenshtein-Distanz} bezeichnet wird. Die Editierdistanz
-misst wie viele Operationen es braucht, um den einen String in den
-anderen zu transformieren. Die Operationen lauten \emph{erstzen}, wobei
-ein Zeichen durch ein weiteres ersetzt wird, \emph{einfügen}, wobei ein
-Zeichen in einen String eingefügt wird und \emph{löschen}, wobei ein
-Zeichen gelöscht wird. Um dies zu implementieren machen wir Gebrauch
-von dem Konzept der \emph{dynamischen Programmierung}. Der Algorithmus ist
-in Pseudocode \ref{alg:editdistance} zu sehen \cite[Vgl. S. 223] {bille2005survey}.
+ist die sogenannte \emph{Editierdistanz} \cite[Vgl. S. 2] {cohen2003comparison}, 
+welche auch als \emph{Levenshtein-Distanz} bezeichnet wird.
+Die Editierdistanz misst, wie viele Operationen es braucht, 
+um den einen String in den anderen zu transformieren. 
+Die Operationen lauten \emph{erstzen}, wobei ein Zeichen
+durch ein weiteres ersetzt wird, \emph{einfügen}, wobei ein
+Zeichen in einen String eingefügt wird und \emph{löschen}, 
+wobei ein Zeichen gelöscht wird. Um dies zu implementieren 
+machen wir Gebrauch von dem Konzept der 
+\emph{dynamischen Programmierung}. Der Algorithmus ist
+in Pseudocode \ref{alg:editdistance} zu sehen 
+\cite[Vgl. S. 223] {bille2005survey}.
 
   \begin{algorithm}
     \begin{algorithmic}[1]
@@ -177,8 +183,9 @@ in Pseudocode \ref{alg:editdistance} zu sehen \cite[Vgl. S. 223] {bille2005surve
     \end{algorithm}
 
 Als weiters Maß für das Finden von Duplikaten ist die
-\emph{Jaccard Similarity} \cite[Vgl. 4.1.1]{theobald2008spotsigs}. Diese misst die Ähnlichkeit von Mengen.
-Da wir aber keine Mengen vergleichen sonders Strings, machen wir einen
+\emph{Jaccard Similarity} \cite[Vgl. 4.1.1]{theobald2008spotsigs}. 
+Diese misst die Ähnlichkeit von Mengen. Da wir aber keine Mengen 
+vergleichen sonders Strings, machen wir einen
 kleinen Trick und überführen unsere Strings in Mengen, indem wir
 jeweils zwei aufeinanderfolgende Zeichen des Strings zu einem Element
 der Menge machen. Zum Beispiel wird aus $"Sweet"$ dann
@@ -204,13 +211,16 @@ Als Beispiel vergleichen wir \emph{Sweet} und \emph{Sweat}.
 \end{gather*}
 
 Neben diesen Maßen existieren weiter, welche sich an der
-Aus-sprache von Worten orientiert. Hierfür ist der Soundex \cite[Vlg. S. 5]{elmagarmid1}
-sowie Metaphone \cite[Vlg. S. 5]{elmagarmid1} ein Beispiel.
+Aus-sprache von Worten orientiert. Hierfür ist der Soundex 
+\cite[Vlg. S. 5]{elmagarmid1} sowie Metaphone 
+\cite[Vlg. S. 5]{elmagarmid1} ein Beispiel.
 Beim Soundex wird das erste Zeichen beibehalten und die folgenden
-Zeichen werden durch die jeweilige Nummer ersetzt. Andere Zeichen werden
-entfernt. Doppelt aufeinander folgende Zahlen werden auf eine Reduziert.
+Zeichen werden durch die jeweilige Nummer ersetzt. 
+Andere Zeichen werden entfernt. Doppelt aufeinander 
+folgende Zahlen werden auf eine Reduziert.
 Es werden maximal drei Nummern verwendet. Falls weniger vorhanden sind,
-werden sie mit Nullen aufgefüllt.
+werden sie mit Nullen aufgefüllt. Die Zeichen werden
+wie folgt esetzt:
 
 
 \[ f(n) =
@@ -231,8 +241,8 @@ werden sie mit Nullen aufgefüllt.
 \subsection*{Vergleichsmatix}
 Um jeden String mit jedem anderen zu vergleichen Stellen wir eine
 sogenannte Vergleichsmatrix auf. Haben wir eine List $l$ an Strings
-haben wir eine Matrix $d$ mit $\abs{l\times l}$ Elementen. Da alle
-Vergleichsmaße kommutative sind und der Vergleich mit sich Selbs
+bekommen wir eine Matrix $d$ mit $\abs{l\times l}$ Elementen. Da alle
+Vergleichsmaße kommutativ sind und der Vergleich mit sich Selbs
 irrelevant ist, müssen wir jedoch nur die Einträge oberhalb der
 Diagonalen von $d[0,0]$ bis $d[\abs{l}, \abs{l}]$ betrachten.
 Dies ist in Abbildung \ref{abb:matrix} dargestellt. Hierbei
@@ -250,8 +260,8 @@ Es müssen sehr viele Vergleiche gemacht werden. Bei $n$
 Strings müssen
 $$\frac{n^2}{2} - n$$
 Vergleiche gemacht werden.
-Bei 1.000 verschiedener
-Elemente müssen 499.000 bei 10.000 schon 49.990.000 Vergleiche
+Bei $1000$ verschiedener
+Elemente müssen $499000$ bei $10000$ schon $49990000$ Vergleiche
 gemacht werden. Dies wird sehr schnell ineffiziente.
 
 Die effizientere Lösung ist hier das Blocking \cite[Vlg. S. 11]{elmagarmid1}.
@@ -272,29 +282,32 @@ dieses Fensters gemacht.
 
 Wenn wir jedoch nur die Liste strikt in $n$
 Teile aufteilen verlieren wir an Genauigkeit, da wir
-manche Strings nicht vergleichen.
+manche Strings, welche eigentlich die selbe Bedeutung haben,
+nicht vergleichen.
 Um das zu verhindern, teilen wir nicht einfach in $n$
 Blöcke, sondern wir sortieren die Strings anhand von
 bestimmten Kriterien. Strings eines bestimmen Kriteriums kommen
 einen Block bzw. werden anhand dieser sortiert \cite[Vlg. S. 11]{elmagarmid1}.
-Diese Kriterien-Blöcke verhindern, das
-ähnliche, bzw. ähnliche String in einen Block kommen
+Diese Kriterien-Blöcke verhindern, dass
+ähnliche Strings in einen Block kommen
 und verglichen werden.
 Es gibt mehrere Strategien Kategorien zu wählen. Diese
-kommt immer auch den Kontext des Strings an.
+kommt immer auf den Kontext des Strings bzw. der Entity 
+im OLAP-Systems an.
 Eine Strategie ist es nach dem Anfangszeichen zu
 sortieren, da dort meist kein Fehler gemacht wird.
 Eine bessere Strategie ist jedoch sich die Entity,
-die diesen String beschreibt, sich genauer anzusehen,
+die diesen String beschreibt, genauer anzusehen,
 um dort eine Eigenschaft zu finden, welche sehr
 Fehlertolerant und 2 String mit gleicher Bedeutung
 dieselbe Eigenschaft haben.
 Nehmen wir zum Beispiel das Deduplizieren von
 Straßennamen. Hier könnte eine sinnvolle
-Eigenschaft sein die ersten 3 Ziffern der
+Eigenschaft sein einen Präfix der
 Postleitzahl zu nehmen, da diese oft richtig
 Eingegeben werden und zwei Straßennamen mit selber
-Bedeutung immer dieselbe Postleitzahl hat.
+Bedeutung immer dieselbe Postleitzahl haben.
+
 Wenn wir die $n$ Strings in $b$ gleich große Blöcke
 einteilen erhalten wir eine Laufzeit von
 $$\frac{1}{2} (\frac{n^2}{b}-n)$$
@@ -310,14 +323,15 @@ Dadurch sinkt die Wahrscheinlichkeit von Duplikaten
 im Endresultat noch einmal.
 
 \section*{Zusammenfassung}
-Alles zusammen ist die Deduplikation eine gute Idee.
+Alles zusammen ist die Deduplikation ein essentieller 
+Bestandteil des ETL-Processes.
 Jedoch muss eine durch den Kontext bedingte Strategie entwickelt
 werden um Duplikate sicher und effizient finden zu
 können. Hierbei ist zuerst die Wähl des Vergleichsmaß
 entscheidend. Des Weiteren muss eine Fehlertolerante
 und mit der Bedeutung übereinstimmende Eigenschaft
-gefunden werden, um die String in vernünftige Blöcke
-einteilen zu können.
+gefunden werden, um die String ideal zu sortieren bzw. 
+in Blöcke einteilen zu können.
 
 \bibliographystyle{abbrv}
 \bibliography{acmart}
