@@ -281,35 +281,35 @@ dieses Fensters gemacht.
 \end{figure}
 
 Wenn wir jedoch nur die Liste strikt in $n$
-Teile aufteilen verlieren wir an Genauigkeit, da wir
+Teile aufteilen, verlieren wir an Genauigkeit, da wir
 manche Strings, welche eigentlich die selbe Bedeutung haben,
 nicht vergleichen.
 Um das zu verhindern, teilen wir nicht einfach in $n$
 Blöcke, sondern wir sortieren die Strings anhand von
 bestimmten Kriterien. Strings eines bestimmen Kriteriums kommen
-einen Block bzw. werden anhand dieser sortiert \cite[Vlg. S. 11]{elmagarmid1}.
+in einen Block bzw. werden anhand diesen sortiert \cite[Vlg. S. 11]{elmagarmid1}.
 Diese Kriterien-Blöcke verhindern, dass
 ähnliche Strings in unterschiedlichen Blöcken landen
 und nicht verglichen werden.
-Es gibt mehrere Strategien Kategorien zu wählen. Diese
+Es gibt mehrere Strategien, Kategorien zu wählen. Diese
 kommt immer auf den Kontext des Strings bzw. auf die Entity 
 im OLAP-Systems, welche zu dem String gehört, an.
-Eine Strategie ist es nach dem Anfangszeichen zu
+Eine Strategie ist es, nach dem Anfangszeichen zu
 sortieren, da dort meist kein Fehler gemacht wird.
-Eine bessere Strategie ist jedoch sich die Entity,
+Eine bessere Strategie ist jedoch, sich die Entity,
 die diesen String beschreibt, genauer anzusehen,
 um dort eine Eigenschaft zu finden, welche sehr
-Fehlertolerant ist und 2 String mit gleicher Bedeutung
+Fehlertolerant ist und 2 Strings mit gleicher Bedeutung
 dieselbe Eigenschaft haben.
 Nehmen wir zum Beispiel das Deduplizieren von
 Straßennamen. Hier könnte eine sinnvolle
 Eigenschaft sein einen Präfix der
 Postleitzahl zu nehmen, da diese oft richtig
-Eingegeben werden und zwei Straßennamen mit selber
+eingegeben werden und zwei Straßennamen mit selber
 Bedeutung immer dieselbe Postleitzahl haben.
 
 Wenn wir die $n$ Strings in $b$ gleich große Blöcke
-einteilen erhalten wir eine Laufzeit von
+einteilen, erhalten wir eine Laufzeit von
 $$\frac{1}{2} (\frac{n^2}{b}-n)$$
 Durch das Aufteilen in Blöcken nach verschiedenen
 Eigenschaften reduzieren wir die Wahrscheinlichkeit,
@@ -326,11 +326,11 @@ im Endresultat noch einmal.
 Alles zusammen ist die Deduplikation ein essentieller 
 Bestandteil des ETL-Prozesses.
 Jedoch muss eine durch den Kontext bedingte Strategie entwickelt
-werden um Duplikate sicher und effizient finden zu
+werden, um Duplikate sicher und effizient finden zu
 können. Hierbei ist zuerst die Wahl des Vergleichsmaß
-entscheidend. Des Weiteren muss eine Fehlertolerante
+entscheidend. Des Weiteren muss eine fehlertolerante
 und mit der Bedeutung übereinstimmende Eigenschaft
-gefunden werden, um die String ideal zu sortieren bzw. 
+gefunden werden, um die Strings ideal zu sortieren bzw. 
 in Blöcke einteilen zu können.
 
 \bibliographystyle{abbrv}
